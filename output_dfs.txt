@@ -1,0 +1,12 @@
+===== DFS (STACK) =====
+Bat dau: A
+Ket thuc: G
+
+Buoc | Dinh xet | Danh sach ke | Stack
+-------------------------------------------
+   1 |        A | B C D  | D C B 
+   2 |        B | I G  | D C G I 
+   3 |        I | G  | D C G G 
+   4 |        G |  | 
+Duong di DFS:
+A -> B -> I -> G

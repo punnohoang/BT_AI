@@ -1,0 +1,15 @@
+BFS (NHOM 15)
+Bat dau: A
+Ket thuc: G
+
+Buoc Dinh      Danh sach ke        Queue
+---------------------------------------------
+1    A         B C D               B C D 
+2    B         I G                 C D I G 
+3    C         E F                 D I G E F 
+4    D         C F                 I G E F C F 
+5    I         G                   G E F C F G 
+6    G                             E F C F G 
+
+Duong di BFS (NHOM 15):
+A -> B -> G
