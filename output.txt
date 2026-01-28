@@ -1,0 +1,13 @@
+GREEDY BEST FIRST SEARCH
+
+Buoc  Dinh lay ra       Them vao                    Hang doi uu tien
+--------------------------------------------------------------------------
+0     -                 A20                         A20 
+1     A20               C15 D6 E7                   D6 E7 C15 
+2     D6                F10 I8                      E7 I8 F10 C15 
+3     E7                K12 G5                      G5 I8 F10 K12 C15 
+4     G5                H3 B0                       B0 H3 I8 F10 K12 C15 
+5     B0                                            H3 I8 F10 K12 C15 
+
+Duong di tim duoc:
+A -> E -> G -> B
