@@ -59,13 +59,13 @@ void greedyBFS(map<string, vector<string>> &graph, map<string, int> &h, string s
 
 	fout << left
 		 << setw(20) << "Phat trien TT"
-		 << setw(35) << "Trang thai ke"
+		 << setw(30) << "Trang thai ke"
 		 << "Danh sach L\n";
-	fout << "-----------------------------------------------------------------------\n";
+	fout << "----------------------------------------------------------------------------------------\n";
 
 	L.push({h[start], start});
 	fout << setw(20) << ""
-		 << setw(35) << ""
+		 << setw(30) << ""
 		 << start << "(" << h[start] << ")" << "\n";
 
 	while (!L.empty())
@@ -82,7 +82,7 @@ void greedyBFS(map<string, vector<string>> &graph, map<string, int> &h, string s
 
 		if (u == goal)
 		{
-			fout << setw(35) << "TTKT-DUNG\n";
+			fout << setw(30) << "TTKT-DUNG\n";
 			break;
 		}
 
@@ -100,7 +100,7 @@ void greedyBFS(map<string, vector<string>> &graph, map<string, int> &h, string s
 		if (!ke.empty())
 			ke.erase(ke.size() - 2);
 
-		fout << setw(35) << ke;
+		fout << setw(30) << ke;
 		printListL(L, fout);
 		fout << "\n";
 	}
