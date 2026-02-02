@@ -1,152 +1,136 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void readInput(const string &filename,
-               map<string,int> &h,
-               map<string, vector<string>> &graph,
-               string &start,
-               string &goal)
-{
-    ifstream fin(filename);
-    fin >> start >> goal;
-    fin.ignore();
+void readInput(const string &filename, map<string, int> &h, map<string, vector<string>> &graph, string &start, string &goal){
+	ifstream fin(filename);
 
-    string line, u, v;
-    int heuristic;
+	fin >> start >> goal;
 
-    while (getline(fin, line))
-    {
-        if (line.empty()) continue;
+	int n;
+	fin >> n;
+	fin.ignore();
 
-        stringstream ss(line);
-        ss >> u >> heuristic;
-        h[u] = heuristic;
+	string line, u, v;
+	int heuristic;
 
-        while (ss >> v)
-            graph[u].push_back(v);
-    }
-    fin.close();
+	for (int i = 0; i < n; i++)
+	{
+		getline(fin, line);
+		if (line.empty())
+		{
+			i--;
+			continue;
+		}
+
+		stringstream ss(line);
+		ss >> u >> heuristic;
+		h[u] = heuristic;
+
+		while (ss >> v)
+			graph[u].push_back(v);
+	}
+
+	fin.close();
 }
 
-void printPQ(priority_queue<pair<int,string>,
-             vector<pair<int,string>>,
-             greater<pair<int,string>>> pq,
-             ofstream &fout)
-{
-    if (pq.empty()) {
-        fout << "rong";
-        return;
-    }
-
-    while (!pq.empty())
-    {
-        fout << pq.top().second
-             << pq.top().first << " ";
-        pq.pop();
-    }
+void printListL(priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> pq, ofstream &fout){
+	while (!pq.empty())
+	{
+		fout << pq.top().second << "(" << pq.top().first << ")";
+		pq.pop();
+		if (!pq.empty())
+			fout << ", ";
+	}
 }
 
-void greedyBFS(map<string, vector<string>> &graph,
-               map<string,int> &h,
-               string start,
-               string goal,
-               const string &outputFile)
-{
-    ofstream fout(outputFile);
+void greedyBFS(map<string, vector<string>> &graph, map<string, int> &h, string start, string goal, const string &outputFile){
+	ofstream fout(outputFile);
 
-    priority_queue<
-        pair<int,string>,
-        vector<pair<int,string>>,
-        greater<pair<int,string>>
-    > pq;
+	priority_queue<
+		pair<int, string>,
+		vector<pair<int, string>>,
+		greater<pair<int, string>>>
+		L;
 
-    map<string,string> parent;
-    set<string> visited;
+	set<string> visited;
+	map<string, string> parent;
 
-    fout << "BEST-FIRST SEARCH\n\n";
+	parent[start] = "";
 
-    fout << left
-         << setw(6) << "Buoc"
-         << setw(18) << "Dinh lay ra"
-         << setw(28) << "Them vao"
-         << "Hang doi uu tien\n";
+	fout << left
+		 << setw(20) << "Phat trien TT"
+		 << setw(35) << "Trang thai ke"
+		 << "Danh sach L\n";
+	fout << "-----------------------------------------------------------------------\n";
 
-    fout << "--------------------------------------------------------------------------\n";
+	L.push({h[start], start});
+	fout << setw(20) << ""
+		 << setw(35) << ""
+		 << start << "(" << h[start] << ")" << "\n";
 
-    // ===== BUOC 0 =====
-    pq.push({h[start], start});
-    fout << setw(6) << "0"
-         << setw(18) << "-"
-         << setw(28) << (start + to_string(h[start])) ;
+	while (!L.empty())
+	{
+		auto cur = L.top();
+		L.pop();
+		string u = cur.second;
 
-    printPQ(pq, fout);
-    fout << "\n";
+		if (visited.count(u))
+			continue;
+		visited.insert(u);
 
-    int step = 1;
+		fout << setw(20) << (u + "(" + to_string(h[u]) + ")");
 
-    
-    while (!pq.empty())
-    {
-        auto top = pq.top(); pq.pop();
-        string u = top.second;
+		if (u == goal)
+		{
+			fout << setw(35) << "TTKT-DUNG\n";
+			break;
+		}
 
-        if (visited.count(u)) continue;
-        visited.insert(u);
+		string ke = "";
+		for (string v : graph[u])
+		{
+			if (!visited.count(v) && !parent.count(v))
+			{
+				parent[v] = u;
+				ke += v + "(" + to_string(h[v]) + "), ";
+				L.push({h[v], v});
+			}
+		}
 
-        string layra = u + to_string(h[u]);
+		if (!ke.empty())
+			ke.erase(ke.size() - 2);
 
-        fout << setw(6) << step++
-             << setw(18) << layra;
+		fout << setw(35) << ke;
+		printListL(L, fout);
+		fout << "\n";
+	}
 
-        string themvao = "";
+	fout << "\nDuong di tim duoc:\n";
 
-        for (string v : graph[u])
-        {
-            if (!visited.count(v))
-            {
-                parent[v] = u;
-                pq.push({h[v], v});
-                themvao += v + to_string(h[v]) + " ";
-            }
-        }
+	vector<string> path;
+	for (string cur = goal; cur != ""; cur = parent[cur])
+		path.push_back(cur);
 
-        fout << setw(28) << themvao;
-        printPQ(pq, fout);
-        fout << "\n";
+	reverse(path.begin(), path.end());
 
-        if (u == goal) break;
-    }
+	for (int i = 0; i < path.size(); i++)
+	{
+		fout << path[i];
+		if (i < path.size() - 1)
+			fout << " -> ";
+	}
 
-    
-    fout << "\nDuong di tim duoc:\n";
-
-    vector<string> path;
-    for (string cur = goal; cur != ""; cur = parent[cur])
-        path.push_back(cur);
-
-    reverse(path.begin(), path.end());
-
-    for (int i = 0; i < path.size(); i++)
-    {
-        fout << path[i];
-        if (i < path.size() - 1)
-            fout << " -> ";
-    }
-
-    fout << "\n";
-    fout.close();
+	fout << "\n";
+	fout.close();
 }
 
+int main(){
+	map<string, vector<string>> graph;
+	map<string, int> h;
+	string start, goal;
 
-int main()
-{
-    map<string, vector<string>> graph;
-    map<string,int> h;
-    string start, goal;
+	readInput("input.txt", h, graph, start, goal);
+	greedyBFS(graph, h, start, goal, "output.txt");
 
-    readInput("input.txt", h, graph, start, goal);
-
-    greedyBFS(graph, h, start, goal, "output.txt");
-
-    return 0;
+	return 0;
 }
